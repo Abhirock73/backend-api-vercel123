@@ -14,7 +14,7 @@ const app = express();
 const authRoutes =require('./routes/auth');
 const orderRoutes = require('./routes/order');
 
-const DB =process.env.MONGO_URI || "mongodb+srv://abhirock:abhirock@cluster0.6vmh6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const DB = process.env.MONGO_URI || "mongodb+srv://abhirock:abhirock@cluster0.6vmh6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 app.use(express.json());
 app.use(cors({
   origin: "*", // Replace with your Flutter Web's port

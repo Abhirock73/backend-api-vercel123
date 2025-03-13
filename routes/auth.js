@@ -41,7 +41,7 @@ authRoutes.post('/api/signIn', async(req,res)=>{
                
                if(!check)  return res.status(400).json({msg: "wrong password"});
                else{
-                    const token = jwt.sign({id:exist._id},  process.env.JWT_SECRET || "passwordKey");
+                    const token = jwt.sign({id:exist._id},process.env.JWT_TOKEN);
 
                     const {password, ...userWithoutPassword } =exist._doc;
 

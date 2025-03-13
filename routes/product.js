@@ -143,6 +143,37 @@ productRouter.get('/api/search-products',async(req,res)=>{
      } catch (e) {
         return res.status(500).json({error:e.message});
      }
+
+});
+
+productRouter.put('/api/edit-product/:productId',user,vendorAuth, async(req,res)=>{
+    try {
+        const {productId} = req.params;
+
+       const products =  await Product.find({productId:productId});
+
+       if(products.length ==0 || !products){
+        return res.status(404).json({msg:"Not Found product"});
+       }
+       if(products.vendorId.toString() != req.user.id){
+              return res.status(403).json({msg:"Not matched User"})
+       }
+
+       // update exclude vendorID
+       const {vendorId , ...updateData} = req.body;
+       
+       // find product with this id and update
+       const updatedProduct = await Product.findByIdAndUpdate(
+                productId,
+                {$set:updateData},// update the field
+                {new:true}// return the true when succ. updated
+       )
+
+       return res.status(200).json(updatedProduct);
+        
+    } catch (e) {
+         return res.status(500).json({error:e.message});
+    }
 });
 
 module.exports = productRouter;
