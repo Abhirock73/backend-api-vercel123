@@ -1,0 +1,28 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+package-lock.json
+yarn.lock
+
+# Python dependencies
+venv/
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.db
+
+# Logs and cache
+logs/
+*.log
+*.out
+*.pid
+*.swp
+.cache/
+coverage/
+debug.log
