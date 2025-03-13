@@ -117,34 +117,70 @@ productRouter.get('/api/products-by-subcategory/:subCategory',async (req,res)=>{
 
 
 // route for product search by name or description
-productRouter.get('/api/search-products',async(req,res)=>{
-     try {
-         const {query} = req.query;
-         // validate that query
-         //if empty return error 400
-         if(!query){
-            return res.status(400).json({msg:"query is required"});
-         }
-         const products = await Product.find({
+
+// productRouter.get('/api/search-products',async(req,res)=>{
+//      try {
+//          const {query} = req.query;
+//          // validate that query
+//          //if empty return error 400
+//          if(!query){
+//             return res.status(400).json({msg:"query is required"});
+//          }
+//          const products = await Product.find({
             
-            $or:[
-                 // regex to match any substring of of string 
-                 // ex apple match with "oregne apple" , "appleslon fnd"
-                 {productName:{regex:query,options:'i'}},// i stand for case insensitive
-                 {description:{regex:query,options:'i'}}
-            ]
-         });
+//             $or:[
+//                  // regex to match any substring of of string 
+//                  // ex apple match with "oregne apple" , "appleslon fnd"
+//                  {productName:{regex:query,options:'i'}},// i stand for case insensitive
+//                  {description:{regex:query,options:'i'}}
+//             ]
+//          });
 
-         if(products.length ==0 || !products) {
-            return res.status(404).json({msg:"No product Found"});
-         }
-         return res.status(200).json(products);
+//          if(products.length ==0 || !products) {
+//             return res.status(404).json({msg:"No product Found"});
+//          }
+//          return res.status(200).json(products);
 
-     } catch (e) {
-        return res.status(500).json({error:e.message});
-     }
+//      } catch (e) {
+//         return res.status(500).json({error:e.message});
+//      }
 
-});
+// });
+productRouter.get('/api/search-products', async (req, res) => {
+    try {
+      const { query } = req.query;
+  
+      // Validate query
+      if (!query || typeof query !== 'string') {
+        return res.status(400).json({ status: 'error', msg: 'Query is required and must be a string' });
+      }
+  
+      // Escape special regex characters
+      const escapeRegex = (string) => {
+        return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      };
+      const escapedQuery = escapeRegex(query);
+  
+      // Search products
+      const products = await Product.find({
+        $or: [
+          { productName: { $regex: escapedQuery, $options: 'i' } },
+          { description: { $regex: escapedQuery, $options: 'i' } },
+        ],
+      });
+  
+      // Handle no products found
+      if (products.length === 0) {
+        return res.status(404).json({ status: 'error', msg: 'No products found' });
+      }
+  
+      // Return success response
+      return res.status(200).json({ status: 'success', data: products });
+    } catch (e) {
+      console.error(e); // Log the error for debugging
+      return res.status(500).json({ status: 'error', error: 'An internal server error occurred' });
+    }
+  });
 
 productRouter.put('/api/edit-product/:productId',user,vendorAuth, async(req,res)=>{
     try {
