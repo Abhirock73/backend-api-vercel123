@@ -181,7 +181,6 @@ productRouter.get('/api/search-products', async (req, res) => {
       return res.status(500).json({ status: 'error', error: 'An internal server error occurred' });
     }
   });
-
 productRouter.put('/api/edit-product/:productId',user,vendorAuth, async(req,res)=>{
     try {
         const {productId} = req.params;
