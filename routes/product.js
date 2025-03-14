@@ -154,15 +154,12 @@ productRouter.get('/api/search-products', async (req, res) => {
       if (!query || typeof query !== 'string') {
         return res.status(400).json({ status: 'error', msg: 'Query is required and must be a string' });
       }
-  
       const products = await Product.find({
-            $or:[
-                  // regex to match any substring of of string 
-                  // ex apple match with "oregne apple" , "appleslon fnd"
-                  {productName:{regex:query,options:'i'}},// i stand for case insensitive
-                  {description:{regex:query,options:'i'}}
-                ]
-            });
+        $or: [
+            { productName: { $regex: query, $options: 'i' } }, // Fixed regex syntax
+            { description: { $regex: query, $options: 'i' } }
+        ]
+    });
       // Handle no products found
       if (products.length === 0) {
         return res.status(404).json({ status: 'error', msg: 'No products found' });
