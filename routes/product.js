@@ -155,20 +155,14 @@ productRouter.get('/api/search-products', async (req, res) => {
         return res.status(400).json({ status: 'error', msg: 'Query is required and must be a string' });
       }
   
-      // Escape special regex characters
-      const escapeRegex = (string) => {
-        return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-      };
-      const escapedQuery = escapeRegex(query);
-  
-      // Search products
       const products = await Product.find({
-        $or: [
-          { productName: { $regex: escapedQuery, $options: 'i' } },
-          { description: { $regex: escapedQuery, $options: 'i' } },
-        ],
-      });
-  
+            $or:[
+                  // regex to match any substring of of string 
+                  // ex apple match with "oregne apple" , "appleslon fnd"
+                  {productName:{regex:query,options:'i'}},// i stand for case insensitive
+                  {description:{regex:query,options:'i'}}
+                ]
+            });
       // Handle no products found
       if (products.length === 0) {
         return res.status(404).json({ status: 'error', msg: 'No products found' });
