@@ -116,36 +116,7 @@ productRouter.get('/api/products-by-subcategory/:subCategory',async (req,res)=>{
 });
 
 
-// route for product search by name or description
 
-// productRouter.get('/api/search-products',async(req,res)=>{
-//      try {
-//          const {query} = req.query;
-//          // validate that query
-//          //if empty return error 400
-//          if(!query){
-//             return res.status(400).json({msg:"query is required"});
-//          }
-//          const products = await Product.find({
-            
-//             $or:[
-//                  // regex to match any substring of of string 
-//                  // ex apple match with "oregne apple" , "appleslon fnd"
-//                  {productName:{regex:query,options:'i'}},// i stand for case insensitive
-//                  {description:{regex:query,options:'i'}}
-//             ]
-//          });
-
-//          if(products.length ==0 || !products) {
-//             return res.status(404).json({msg:"No product Found"});
-//          }
-//          return res.status(200).json(products);
-
-//      } catch (e) {
-//         return res.status(500).json({error:e.message});
-//      }
-
-// });
 productRouter.get('/api/search-products', async (req, res) => {
     try {
       const { query } = req.query;
@@ -157,7 +128,9 @@ productRouter.get('/api/search-products', async (req, res) => {
       const products = await Product.find({
         $or: [
             { productName: { $regex: query, $options: 'i' } }, // Fixed regex syntax
-            { description: { $regex: query, $options: 'i' } }
+            { description: { $regex: query, $options: 'i' } },
+            { category: { $regex: query, $options: 'i' } },
+            { subCategory: { $regex: query, $options: 'i' } }
         ]
     });
       // Handle no products found
