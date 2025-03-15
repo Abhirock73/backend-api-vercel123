@@ -14,7 +14,8 @@ authRoutes.post('/api/signup',async(req,res)=>{
         const {fullName,email,password} = await  req.body;
 
        const exist = await User.findOne({email});
-       if(exist){
+       const existVendor = await Vendor.findOne({email});
+       if(exist || existVendor){
           return res.status(400).json({msg: "already exist user"});
        }
        else{
@@ -35,7 +36,9 @@ authRoutes.post('/api/signup',async(req,res)=>{
 authRoutes.post('/api/signIn', async(req,res)=>{
        try{
             const {email,password} = req.body;
+
             const exist = await User.findOne({email});
+
             if(!exist){
                   return res.status(400).json({msg: "this email doesn't exist"});
             }else{
@@ -43,11 +46,11 @@ authRoutes.post('/api/signIn', async(req,res)=>{
                
                if(!check)  return res.status(400).json({msg: "wrong password"});
                else{
-                    const token = jwt.sign({id:exist._id},process.env.JWT_TOKEN);
+                    const token = jwt.sign({id:exist._id},/*process.env.JWT_TOKEN*/"passwordKey", {expiresIn: '1m'});
 
                     const {password, ...userWithoutPassword } =exist._doc;
 
-                    return  res.json({token, user: userWithoutPassword});
+                    return  res.json({token,  userWithoutPassword});
                }
             }
 
@@ -56,6 +59,40 @@ authRoutes.post('/api/signIn', async(req,res)=>{
        }
 });
 
+// check for toke
+authRoutes.post('/tokenIsValid', async (req, res) => {
+      try {
+            const token = req.header("x-auth-token");
+            if (!token) return res.json(false); // No token provided
+
+            // Verify the token
+            const verified = jwt.verify(token,  "passwordKey");
+            if (!verified) return res.json(false); // Token is invalid
+
+            // Check if the user exists
+            const person = await User.findById(verified.id);
+            if (!person) return res.json(false); // User not found
+
+            // Token is valid and user exists
+            return res.json(true);
+      } catch (e) {
+            // Handle errors (e.g., invalid token, server error)
+            return res.status(500).json({ error: e.message });
+      }
+});
+
+// define the get route for authentication router
+authRoutes.get('/',user , async(req,res)=>{
+      try {
+           // retrieve the user data from database using the id from the authenticated user 
+           const Person = await User.findById(req.user);
+           // send the user data in json format including token
+           return res.json({...user._doc,token: req.token});
+
+      } catch (e) {
+            return res.status(500).json({error:e.message});
+      }
+});
 
 authRoutes.put('/api/users/:id', async(req,res)=>{
             try {
@@ -129,8 +166,8 @@ authRoutes.delete('/api/user/delete-account/:id', user,async(req,res)=>{
       try {
             // extract id from body
             const {id} = req.params;
-            const user1 = await User.find(id);
-            const user2 = await Vendor.find(id);
+            const user1 = await User.findById(id);
+            const user2 = await Vendor.findById(id);
 
             if(!user1 && !user2){
                   return res.status(404).json({msg:"No such User Found"});
@@ -141,10 +178,10 @@ authRoutes.delete('/api/user/delete-account/:id', user,async(req,res)=>{
             else if(user2){
                   await Vendor.findByIdAndDelete(id);
             }
-            return re.status(200).json({msg:"Successfully deleted"});
+            return res.status(200).json({msg:"Successfully deleted"});
 
       } catch (e) {
-            return re.status(500).json({error:e.message});
+            return res.status(500).json({error:e.message});
       }
 });
 

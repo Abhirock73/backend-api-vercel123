@@ -3,13 +3,17 @@ const Vendor = require('../models/vendor');
 const bcrypt = require('bcryptjs');
 const vendorRouter = express.Router();
 const jwt = require('jsonwebtoken');
+const User = require('../models/user')
 
 vendorRouter.post('/api/v2/vendor/signup',async(req,res)=>{
     try{
       const {fullName,email,storeName,storeImage,storeDescription,password} = await  req.body;
+
+      const existUser = await User.findOne({email});
+      
       // await User.find(email);
       const exist = await Vendor.findOne({email});
-     if(exist){
+     if(exist || existUser){
         return res.status(400).json({msg: "already exist vendor"});
      }
      else{

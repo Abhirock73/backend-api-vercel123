@@ -1,1 +1,1 @@
-/api/user/delete-account/
+/api/orders
