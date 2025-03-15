@@ -17,12 +17,12 @@ const orderRoutes = require('./routes/order');
 const DB = process.env.MONGO_URI || "mongodb+srv://abhirock:abhirock@cluster0.6vmh6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 app.use(express.json());
 app.use(cors({
-  origin: "*", // Replace with your Flutter Web's port
-  methods: "GET, POST, PUT, DELETE, OPTIONS,PATCH",
-  allowedHeaders: "Content-Type, *",
-  credentials: true,
-}
-));
+  origin: '*', // Allow requests from this origin
+  methods: 'GET, POST, PUT, DELETE, OPTIONS,PATCH', // Allowed HTTP methods
+  allowedHeaders: 'Content-Type, Authorization, x-auth-token', // Allowed headers
+  credentials: true, // Allow cookies and credentials
+}));
+
 app.options('*', cors());
 
 app.use(authRoutes);
