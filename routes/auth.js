@@ -139,7 +139,7 @@ authRoutes.delete('/api/user/delete-account/:id', user,async(req,res)=>{
                   await User.findByIdAndDelete(id);
             }
             else if(user2){
-                  await User.findByIdAndDelete(id);
+                  await Vendor.findByIdAndDelete(id);
             }
             return re.status(200).json({msg:"Successfully deleted"});
 
