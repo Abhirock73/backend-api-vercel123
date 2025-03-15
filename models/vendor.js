@@ -18,6 +18,18 @@ const vendorSchema = mongoose.Schema({
             message: "please enter valid Email",
         },
     },
+    storeName:{
+        type:String,
+        required:true,
+    },
+    storeImage:{
+        type:String,
+        required:true,
+    },
+    storeDescription:{
+        type:String,
+        required:true,
+    },
     State:{
         type: String,
         default:"",

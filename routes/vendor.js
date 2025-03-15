@@ -4,11 +4,11 @@ const bcrypt = require('bcryptjs');
 const vendorRouter = express.Router();
 const jwt = require('jsonwebtoken');
 
-vendorRouter.post('/api/vendor/signup',async(req,res)=>{
+vendorRouter.post('/api/v2/vendor/signup',async(req,res)=>{
     try{
-      const {fullName,email,password} = await  req.body;
-
-     const exist = await Vendor.findOne({email});
+      const {fullName,email,storeName,storeImage,storeDescription,password} = await  req.body;
+      // await User.find(email);
+      const exist = await Vendor.findOne({email});
      if(exist){
         return res.status(400).json({msg: "already exist vendor"});
      }
@@ -16,7 +16,7 @@ vendorRouter.post('/api/vendor/signup',async(req,res)=>{
          const salt = await bcrypt.genSalt(10);
          const hashedPassword = await bcrypt.hash(password,salt);
 
-         let vendor = new Vendor({fullName,email,password:hashedPassword});
+         let vendor = new Vendor({fullName,email,storeName,storeImage,storeDescription,password:hashedPassword});
          await vendor.save();
         return  res.json({vendor});
      }

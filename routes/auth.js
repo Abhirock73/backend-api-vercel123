@@ -4,6 +4,8 @@ const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const authRoutes = express.Router();
 const jwt = require('jsonwebtoken');
+const {user} = require('../middleware/auth');
+const Vendor = require("../models/vendor");
 // const {dbconnect()}=require('../index')
 
 
@@ -123,6 +125,27 @@ authRoutes.get('/api/users',async(req,res)=>{
 
 
 
+authRoutes.delete('/api/user/delete-account/:id', user,async(req,res)=>{
+      try {
+            // extract id from body
+            const {id} = req.params;
+            const user1 = await User.find(id);
+            const user2 = await Vendor.find(id);
 
+            if(!user1 && !user2){
+                  return res.status(404).json({msg:"No such User Found"});
+            }
+            if(user1){
+                  await User.findByIdAndDelete(id);
+            }
+            else if(user2){
+                  await User.findByIdAndDelete(id);
+            }
+            return re.status(200).json({msg:"Successfully deleted"});
+
+      } catch (e) {
+            return re.status(500).json({error:e.message});
+      }
+});
 
 module.exports = authRoutes;
