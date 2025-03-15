@@ -1,11 +1,11 @@
 const express = require('express');
 const User = require('../models/user');
-
+const Vendor = require('../models/vendor');
 const bcrypt = require('bcryptjs');
 const authRoutes = express.Router();
 const jwt = require('jsonwebtoken');
 const {user} = require('../middleware/auth');
-const Vendor = require("../models/vendor");
+
 // const {dbconnect()}=require('../index')
 
 
@@ -46,7 +46,7 @@ authRoutes.post('/api/signIn', async(req,res)=>{
                
                if(!check)  return res.status(400).json({msg: "wrong password"});
                else{
-                    const token = jwt.sign({id:exist._id},/*process.env.JWT_TOKEN*/"passwordKey", {expiresIn: '1m'});
+                    const token = jwt.sign({id:exist._id},/*process.env.JWT_TOKEN*/"passwordKey", {expiresIn: '300m'});
 
                     const {password, ...userWithoutPassword } =exist._doc;
 
