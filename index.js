@@ -19,7 +19,8 @@ app.use(express.json());
 app.use(cors({
   origin: "*", // Replace with your Flutter Web's port
   methods: "GET, POST, PUT, DELETE, OPTIONS,PATCH",
-  allowedHeaders: "Content-Type, *"
+  allowedHeaders: "Content-Type, *",
+  credentials: true,
 }
 ));
 app.options('*', cors());
